@@ -1,6 +1,12 @@
 import Link from "next/link";
+import { RestaurantCardType } from "..";
+import Restaurant from "../restaurant/[slug]";
 
-export default function RestaurantCard() {
+interface Props {
+  restaurant: RestaurantCardType;
+}
+
+export default function RestaurantCard({ restaurant }: Props) {
   return (
     <div className="w-64 h-72 m-3 rounded overflow-hidden border cursor-pointer">
       <Link href="/restaurant/milestones-grill">
@@ -10,7 +16,7 @@ export default function RestaurantCard() {
           className="w-full h-36"
         />
         <div className="p-1">
-          <h3 className="font-bold text-2xl mb-2">Milestones Grill</h3>
+          <h3 className="font-bold text-2xl mb-2">{restaurant.name} adfsgah</h3>
           <div className="flex items-start">
             <div className="flex mb-2">*****</div>
             <p className="ml-2">77 reviews</p>

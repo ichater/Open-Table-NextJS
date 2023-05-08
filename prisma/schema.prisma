@@ -11,12 +11,12 @@ datasource db {
 }
 
 
-model Resturant {
+model Restaurant {
   id  Int @id @default(autoincrement())
   name        String
   main_image  String
   description String
-  images      String
+  images      String[]
   open_time   String
   close_time  String
   slug        String  @unique
@@ -38,7 +38,7 @@ model Item {
   description String
   restaurant_id Int
   // The below key is needed for the above key to be linked to the Restaurant table
-  restaurant  Resturant @relation(fields:[restaurant_id], references:[id])
+  restaurant  Restaurant @relation(fields:[restaurant_id], references:[id])
   created_at DateTime @default(now())
   updated_at  DateTime @updatedAt
 }
@@ -46,7 +46,7 @@ model Item {
 model Location {
   id Int @id @default(autoincrement())
   name  String
-  restaurants Resturant[]
+  restaurants Restaurant[]
   created_at DateTime @default(now())
   updated_at  DateTime @updatedAt
 }
@@ -54,7 +54,7 @@ model Location {
 model Cuisine {
   id Int @id @default(autoincrement())
   name  String
-  restaurants Resturant[]
+  restaurants Restaurant[]
   created_at DateTime @default(now())
   updated_at  DateTime @updatedAt
 }
