@@ -10,6 +10,7 @@ export type RestaurantCardType = {
   cuisine: Cuisine;
   location: Location;
   price: PRICE;
+  slug: string;
 };
 
 type Props = {
@@ -17,13 +18,12 @@ type Props = {
 };
 
 export default function Home({ restaurants }: Props) {
-  console.log({ restaurants });
   return (
     <main>
       <Header />
       <div className="py-3 px-36 mt-10 flex flex-wrap justify-center">
         {restaurants.map((restaurant) => (
-          <RestaurantCard restaurant={restaurant} />
+          <RestaurantCard key={restaurant.id} restaurant={restaurant} />
         ))}
       </div>
     </main>
@@ -38,6 +38,7 @@ export async function getServerSideProps() {
       id: true,
       name: true,
       main_image: true,
+      slug: true,
       cuisine: true,
       location: true,
       price: true,
