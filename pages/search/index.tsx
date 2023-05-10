@@ -1,10 +1,11 @@
-import NavBar from "../components/NavBar";
 import Head from "./head";
 import Header from "./components/Header";
 import RestaurantCard from "./components/RestaurantCard";
 import SideBar from "./components/SideBar";
+import { prisma } from "../../server/db/client";
 
-export default function search() {
+export default function search({ restaurants }: any) {
+  console.log(restaurants);
   return (
     <>
       <Head />
@@ -18,3 +19,33 @@ export default function search() {
     </>
   );
 }
+
+export const getServerSideProps = async (context: any) => {
+  const { city } = context.query;
+  if (!city) return { props: { restaurants: [] } };
+
+  const restaurants = await prisma.restaurant.findMany({
+    where: {
+      location: {
+        name: {
+          equals: city.toLowerCase(),
+        },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      main_image: true,
+      slug: true,
+      cuisine: true,
+      location: true,
+      price: true,
+    },
+  });
+
+  return {
+    props: {
+      restaurants: JSON.parse(JSON.stringify(restaurants)),
+    },
+  };
+};
