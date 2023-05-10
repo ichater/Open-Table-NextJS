@@ -8,23 +8,33 @@ import ReservationCard from "./components/ReservationCard";
 import Layout from "./layout";
 import { prisma } from "../../../server/db/client";
 
-export default function Restaurant({ restaurant }: any) {
+export interface Restaurant {
+  id: string;
+  name: string;
+  images: string[];
+  description: string;
+  slug: string;
+}
+
+type Props = {
+  restaurant: Restaurant;
+};
+
+export default function Restaurant({ restaurant }: Props) {
   const { slug, name, images, description } = restaurant;
   return (
     <>
-      <Layout name={name} slug={slug}>
-        <div className="bg-white w-[70%] rounded p-3 shadow">
-          <RestaurantNavbar slug={slug} />
-          <Title name={name} />
-          <Rating />
-          <Description description={description} />
-          <Images images={images} />
-          <Reviews />
-        </div>
-        <div className="w-[27%] relative text-reg">
-          <ReservationCard />
-        </div>
-      </Layout>
+      <div className="bg-white w-[70%] rounded p-3 shadow">
+        <RestaurantNavbar slug={slug} />
+        <Title name={name} />
+        <Rating />
+        <Description description={description} />
+        <Images images={images} />
+        <Reviews />
+      </div>
+      <div className="w-[27%] relative text-reg">
+        <ReservationCard />
+      </div>
     </>
   );
 }
@@ -50,4 +60,13 @@ export const getServerSideProps = async (context: any) => {
       restaurant: JSON.parse(JSON.stringify(restaurant)),
     },
   };
+};
+
+Restaurant.getLayout = function getLayout(page: JSX.Element, pageProps: Props) {
+  const { restaurant } = pageProps;
+  return (
+    <Layout name={restaurant.name} slug={restaurant.slug}>
+      {page}
+    </Layout>
+  );
 };

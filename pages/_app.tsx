@@ -7,11 +7,13 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
 
-type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout;
-};
+interface MyAppProps extends AppProps {
+  Component: any & {
+    getLayout?: (page: React.ReactNode, props: any) => React.ReactNode;
+  };
+}
 
-export default function App({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout ?? ((page) => page);
-  return getLayout(<Component {...pageProps} />);
+export default function App({ Component, pageProps }: MyAppProps) {
+  const getLayout = Component.getLayout ?? ((page: React.ReactNode) => page);
+  return getLayout(<Component {...pageProps} />, pageProps);
 }

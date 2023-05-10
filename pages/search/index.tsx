@@ -3,8 +3,23 @@ import Header from "./components/Header";
 import RestaurantCard from "./components/RestaurantCard";
 import SideBar from "./components/SideBar";
 import { prisma } from "../../server/db/client";
+import { Cuisine, Location, PRICE } from "@prisma/client";
+import { GetServerSideProps } from "next";
 
-export default function search({ restaurants }: any) {
+export interface Restaurant {
+  id: string;
+  name: string;
+  slug: string;
+  cuisine: Cuisine;
+  location: Location;
+  price: PRICE;
+}
+
+type Props = {
+  restaurants: Restaurant[];
+};
+
+export default function search({ restaurants }: Props) {
   console.log(restaurants);
   return (
     <>
@@ -13,29 +28,34 @@ export default function search({ restaurants }: any) {
       <div className="flex py-4 m-auto w-2/3 justify-between items-start">
         <SideBar />
         <div className="w-5/6">
-          <RestaurantCard />
+          {restaurants.map((restaurant) => (
+            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+          ))}
         </div>
       </div>
     </>
   );
 }
 
-export const getServerSideProps = async (context: any) => {
-  const { city } = context.query;
+export const getServerSideProps: GetServerSideProps<{
+  restaurants: Restaurant[];
+}> = async ({ query }) => {
+  const { city } = query;
   if (!city) return { props: { restaurants: [] } };
 
   const restaurants = await prisma.restaurant.findMany({
     where: {
       location: {
         name: {
-          equals: city.toLowerCase(),
+          equals: Array.isArray(city)
+            ? city[0].toLowerCase()
+            : city.toLowerCase(),
         },
       },
     },
     select: {
       id: true,
       name: true,
-      main_image: true,
       slug: true,
       cuisine: true,
       location: true,

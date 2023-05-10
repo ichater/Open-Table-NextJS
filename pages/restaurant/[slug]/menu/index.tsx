@@ -2,18 +2,26 @@ import Layout from "../layout";
 import RestaurantNavbar from "../components/NavBar";
 import Menu from "../components/Menu";
 import { prisma } from "../../../../server/db/client";
+import { Item } from "@prisma/client";
 
-export default function ResturantMenu({ restaurant }: any) {
+interface MenuData {
+  id: string;
+  name: string;
+  items: Item[];
+  slug: string;
+}
+
+type Props = {
+  restaurant: MenuData;
+};
+
+export default function ResturantMenu({ restaurant }: Props) {
   const { slug, name, items } = restaurant;
   return (
-    <>
-      <Layout name={name} slug={slug}>
-        <div className="bg-white w-[100%] rounded p-3 shadow">
-          <RestaurantNavbar slug={slug} />
-          <Menu items={items} />
-        </div>
-      </Layout>
-    </>
+    <div className="bg-white w-[100%] rounded p-3 shadow">
+      <RestaurantNavbar slug={slug} />
+      <Menu items={items} />
+    </div>
   );
 }
 
@@ -37,4 +45,15 @@ export const getServerSideProps = async (context: any) => {
       restaurant: JSON.parse(JSON.stringify(restaurant)),
     },
   };
+};
+
+ResturantMenu.getLayout = function getLayout(
+  page: JSX.Element,
+  pageProps: Props
+) {
+  return (
+    <Layout name={pageProps.restaurant.name} slug={pageProps.restaurant.slug}>
+      {page}
+    </Layout>
+  );
 };

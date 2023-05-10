@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { Restaurant } from "..";
 
-export default function RestaurantCard() {
+type Props = {
+  restaurant: Restaurant;
+};
+export default function RestaurantCard({ restaurant }: Props) {
+  const { name, cuisine, location, price } = restaurant;
   return (
     <div className="border-b flex pb-5">
       <img
