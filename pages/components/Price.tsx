@@ -6,7 +6,7 @@ export default function Price({ price }: { price: PRICE }) {
     if (pri === PRICE.CHEAP) {
       return (
         <>
-          <span>$$</span>
+          <span>$</span>
           <span className="text-gray-400">$$</span>
         </>
       );
@@ -14,13 +14,13 @@ export default function Price({ price }: { price: PRICE }) {
     if (pri === PRICE.REGULAR) {
       return (
         <>
-          <span>$</span>
-          <span className="text-gray-400">$$$</span>
+          <span>$$</span>
+          <span className="text-gray-400">$</span>
         </>
       );
     }
     if (pri === PRICE.EXPENSIVE) {
-      return <span>$$$$</span>;
+      return <span>$$$</span>;
     }
   };
   return <p className="flex mr-3">{renderPrice(price)}</p>;

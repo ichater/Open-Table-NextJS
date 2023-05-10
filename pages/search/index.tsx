@@ -13,6 +13,7 @@ export interface Restaurant {
   cuisine: Cuisine;
   location: Location;
   price: PRICE;
+  main_image: string;
 }
 
 type Props = {
@@ -76,6 +77,7 @@ export const getServerSideProps: GetServerSideProps<{
       cuisine: true,
       location: true,
       price: true,
+      main_image: true,
     },
   });
 
