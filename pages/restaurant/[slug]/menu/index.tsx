@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function ResturantMenu({ restaurant }: Props) {
-  const { slug, name, items } = restaurant;
+  const { slug, items } = restaurant;
   return (
     <div className="bg-white w-[100%] rounded p-3 shadow">
       <RestaurantNavbar slug={slug} />

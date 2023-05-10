@@ -17,16 +17,17 @@ export interface Restaurant {
 
 type Props = {
   restaurants: Restaurant[];
+  cuisines: Cuisine[];
+  locations: Location[];
 };
 
-export default function search({ restaurants }: Props) {
-  console.log(restaurants);
+export default function search({ restaurants, cuisines, locations }: Props) {
   return (
     <>
       <Head />
       <Header />
       <div className="flex py-4 m-auto w-2/3 justify-between items-start">
-        <SideBar />
+        <SideBar cuisines={cuisines} locations={locations} />
         <div className="w-5/6">
           {restaurants.map((restaurant) => (
             <RestaurantCard key={restaurant.id} restaurant={restaurant} />
@@ -40,9 +41,24 @@ export default function search({ restaurants }: Props) {
 export const getServerSideProps: GetServerSideProps<{
   restaurants: Restaurant[];
 }> = async ({ query }) => {
-  const { city } = query;
-  if (!city) return { props: { restaurants: [] } };
+  const cuisines = await prisma.cuisine.findMany();
 
+  const locations = await prisma.location.findMany();
+
+  const cuisineLocationObject = {
+    cuisines: JSON.parse(JSON.stringify(cuisines)),
+    locations: JSON.parse(JSON.stringify(locations)),
+  };
+
+  const { city } = query;
+
+  if (!city)
+    return {
+      props: {
+        restaurants: [],
+        ...cuisineLocationObject,
+      },
+    };
   const restaurants = await prisma.restaurant.findMany({
     where: {
       location: {
@@ -66,6 +82,7 @@ export const getServerSideProps: GetServerSideProps<{
   return {
     props: {
       restaurants: JSON.parse(JSON.stringify(restaurants)),
+      ...cuisineLocationObject,
     },
   };
 };
