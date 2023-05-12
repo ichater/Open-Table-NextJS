@@ -7,6 +7,7 @@ import Reviews from "./components/Reviews";
 import ReservationCard from "./components/ReservationCard";
 import Layout from "./layout";
 import { prisma } from "../../../server/db/client";
+import { Review } from "@prisma/client";
 
 export interface Restaurant {
   id: string;
@@ -14,6 +15,7 @@ export interface Restaurant {
   images: string[];
   description: string;
   slug: string;
+  reviews: Review[];
 }
 
 type Props = {
@@ -21,16 +23,16 @@ type Props = {
 };
 
 export default function Restaurant({ restaurant }: Props) {
-  const { slug, name, images, description } = restaurant;
+  const { slug, name, images, description, reviews } = restaurant;
   return (
     <>
       <div className="bg-white w-[70%] rounded p-3 shadow">
         <RestaurantNavbar slug={slug} />
         <Title name={name} />
-        <Rating />
+        <Rating reviews={reviews} />
         <Description description={description} />
         <Images images={images} />
-        <Reviews />
+        <Reviews reviews={reviews} />
       </div>
       <div className="w-[27%] relative text-reg">
         <ReservationCard />
@@ -49,6 +51,7 @@ export const getServerSideProps = async (context: any) => {
       images: true,
       description: true,
       slug: true,
+      reviews: true,
     },
   });
 

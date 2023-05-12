@@ -1,6 +1,8 @@
+import { Review } from "@prisma/client";
 import React from "react";
+import Stars from "../../../components/Stars";
 
-export default function Reviews() {
+export default function Reviews({ reviews }: any) {
   return (
     <div>
       <h1 className="font-bold text-3xl mt-10 mb-7 borber-b pb-5">
@@ -18,7 +20,9 @@ export default function Reviews() {
             </div>
             <div className="ml-10 w-5/6">
               <div className="flex items-center">
-                <div className="flex mr-5">*****</div>
+                <div className="flex mr-5">
+                  <Stars reviews={reviews} />
+                </div>
               </div>
               <div className="mt-5">
                 <p className="text-lg font-light">

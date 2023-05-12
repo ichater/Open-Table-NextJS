@@ -2,13 +2,13 @@ import Link from "next/link";
 import { Restaurant } from "..";
 import Price from "../../components/Price";
 import { calculateReviewRatingAverage } from "../../../utils/calculateReviewRatingAverage";
+import Stars from "../../components/Stars";
 
 type Props = {
   restaurant: Restaurant;
 };
 export default function RestaurantCard({ restaurant }: Props) {
   const { name, cuisine, location, price, main_image, reviews } = restaurant;
-  console.log(reviews[0] ? reviews[0].rating : "not here");
 
   const reviewRatingString = (rating: number): string => {
     if (rating > 0 && rating < 1) return "Its shit";
@@ -31,7 +31,7 @@ export default function RestaurantCard({ restaurant }: Props) {
       <div className="pl-5">
         <h2 className="text-3xl">{name}</h2>
         <div className="flex items-start">
-          <div className="flex mb-2">*****</div>
+          <Stars reviews={reviews} />
           <p className="ml-2 text-sm">{ratingText}</p>
         </div>
         <div className="mb-9">
