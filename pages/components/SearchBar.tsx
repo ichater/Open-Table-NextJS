@@ -4,6 +4,7 @@ import React, { useState } from "react";
 export default function SearchBar() {
   const router = useRouter();
   const [location, setLocation] = useState<string>("");
+  console.log(router.query);
   return (
     <div className="text-left text-lg py-3 m-auto flex justify-center">
       <input

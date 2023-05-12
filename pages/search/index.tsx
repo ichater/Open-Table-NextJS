@@ -51,25 +51,40 @@ export const getServerSideProps: GetServerSideProps<{
     locations: JSON.parse(JSON.stringify(locations)),
   };
 
-  const { city } = query;
+  const { city, cuisine: foodType, price: cost } = query;
 
-  if (!city)
-    return {
-      props: {
-        restaurants: [],
-        ...cuisineLocationObject,
+  const where: any = {};
+
+  if (city) {
+    const location = {
+      name: {
+        equals: Array.isArray(city)
+          ? city[0].toLowerCase()
+          : city.toLowerCase(),
       },
     };
-  const restaurants = await prisma.restaurant.findMany({
-    where: {
-      location: {
-        name: {
-          equals: Array.isArray(city)
-            ? city[0].toLowerCase()
-            : city.toLowerCase(),
-        },
+    where.location = location;
+  }
+  if (foodType) {
+    const cuisine = {
+      name: {
+        equals: Array.isArray(foodType)
+          ? foodType[0].toLowerCase()
+          : foodType.toLowerCase(),
       },
-    },
+    };
+    where.cuisine = cuisine;
+  }
+
+  if (cost) {
+    const price = {
+      equals: Array.isArray(cost) ? cost[0].toUpperCase() : cost.toUpperCase(),
+    };
+    where.price = price;
+  }
+
+  const restaurants = await prisma.restaurant.findMany({
+    where,
     select: {
       id: true,
       name: true,
