@@ -51,8 +51,9 @@ ResturantMenu.getLayout = function getLayout(
   page: JSX.Element,
   pageProps: Props
 ) {
+  const { name, slug } = pageProps.restaurant;
   return (
-    <Layout name={pageProps.restaurant.name} slug={pageProps.restaurant.slug}>
+    <Layout name={name} slug={slug}>
       {page}
     </Layout>
   );
