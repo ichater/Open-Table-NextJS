@@ -7,7 +7,8 @@ interface Props {
 }
 
 export default function RestaurantCard({ restaurant }: Props) {
-  const { name, cuisine, location, main_image, slug, price } = restaurant;
+  const { name, cuisine, location, main_image, slug, price, reviews } =
+    restaurant;
   return (
     <div className="w-64 h-72 m-3 rounded overflow-hidden border cursor-pointer">
       <Link href={`/restaurant/${slug}`}>
@@ -16,7 +17,7 @@ export default function RestaurantCard({ restaurant }: Props) {
           <h3 className="font-bold text-2xl mb-2">{name}</h3>
           <div className="flex items-start">
             <div className="flex mb-2"></div>
-            <p className="ml-2">77 reviews</p>
+            <p className="ml-2">{reviews ? reviews.length : "0"}: reviews</p>
           </div>
           <div className="flex text-reg font-light capitalize">
             <p className=" mr-3">{cuisine.name}</p>

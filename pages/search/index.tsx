@@ -3,7 +3,7 @@ import Header from "./components/Header";
 import RestaurantCard from "./components/RestaurantCard";
 import SideBar from "./components/SideBar";
 import { prisma } from "../../server/db/client";
-import { Cuisine, Location, PRICE } from "@prisma/client";
+import { Cuisine, Location, PRICE, Review } from "@prisma/client";
 import { GetServerSideProps } from "next";
 
 export interface Restaurant {
@@ -14,6 +14,7 @@ export interface Restaurant {
   location: Location;
   price: PRICE;
   main_image: string;
+  reviews: Review[];
 }
 
 type Props = {
@@ -93,6 +94,7 @@ export const getServerSideProps: GetServerSideProps<{
       location: true,
       price: true,
       main_image: true,
+      reviews: true,
     },
   });
 

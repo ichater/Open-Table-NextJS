@@ -1,7 +1,7 @@
 import Header from "./components/Header";
 import RestaurantCard from "./components/RestaurantCard";
 import { prisma } from "../server/db/client";
-import { Cuisine, Location, PRICE } from "@prisma/client";
+import { Cuisine, Location, PRICE, Review } from "@prisma/client";
 
 export type RestaurantCardType = {
   id: number;
@@ -11,6 +11,7 @@ export type RestaurantCardType = {
   location: Location;
   price: PRICE;
   slug: string;
+  reviews: Review[];
 };
 
 type Props = {
@@ -42,6 +43,7 @@ export async function getServerSideProps() {
       cuisine: true,
       location: true,
       price: true,
+      reviews: true,
     },
   });
 
