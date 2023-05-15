@@ -9,36 +9,19 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { firstName, lastName, email, phone, city, passWord } = req.body;
     const errors: string[] = [];
+    const { email, passWord } = req.body;
 
     const validationSchema = [
-      {
-        valid: validator.isLength(firstName, { min: 1, max: 20 }),
-        errorMessage: "First Name is invalid",
-      },
-      {
-        valid: validator.isLength(lastName, { min: 1, max: 20 }),
-        errorMessage: "Last Name is invalid",
-      },
       {
         valid: validator.isEmail(email),
         errorMessage: "Email is invalid",
       },
       {
-        valid: validator.isMobilePhone(phone),
-        errorMessage: "phone number is invalid",
-      },
-      {
-        valid: validator.isLength(city, { min: 1 }),
-        errorMessage: "city is invalid",
-      },
-      {
-        valid: validator.isStrongPassword(passWord),
-        errorMessage: "Password is not strong enough",
+        valid: validator.isLength(passWord, { min: 1 }),
+        errorMessage: "Password is invalid",
       },
     ];
-
     validationSchema.forEach((check) => {
       if (!check.valid) {
         errors.push(check.errorMessage);
@@ -50,27 +33,27 @@ export default async function handler(
     }
 
     const userWithEmail = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (userWithEmail) {
-      return res
-        .status(400)
-        .json({ errorMessage: "Email is associated with another account" });
-    }
-
-    const hashedPassword = await bcrypt.hash(passWord, 10);
-
-    const user = await prisma.user.create({
-      data: {
-        first_name: firstName,
-        last_name: lastName,
-        password: hashedPassword,
-        city,
-        phone,
+      where: {
         email,
       },
     });
+
+    if (!userWithEmail) {
+      return res
+        .status(401)
+        .json({ errorMessage: "Email or password is invalid" });
+    }
+
+    const isMatch: boolean = await bcrypt.compare(
+      passWord,
+      userWithEmail.password
+    );
+
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ errorMessage: "Email or password is invalid" });
+    }
 
     // algorithm for the protected header
     const alg = "HS256";
@@ -78,7 +61,7 @@ export default async function handler(
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     // create web token through jose
 
-    const token = await new jose.SignJWT({ email: user.email })
+    const token = await new jose.SignJWT({ email: userWithEmail.email })
       .setProtectedHeader({ alg })
       .setExpirationTime("24h")
       .sign(secret);
@@ -87,5 +70,6 @@ export default async function handler(
       token,
     });
   }
+
   return res.status(404).json("unknown endpoint");
 }
