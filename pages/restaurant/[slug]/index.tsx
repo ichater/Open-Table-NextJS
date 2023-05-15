@@ -56,7 +56,8 @@ export const getServerSideProps = async (context: any) => {
   });
 
   if (!restaurant) {
-    throw new Error();
+    context.res.statusCode = 404;
+    return { notFound: true };
   }
   return {
     props: {

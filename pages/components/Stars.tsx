@@ -22,10 +22,16 @@ export default function Stars({ reviews }: { reviews: Review[] }) {
     return stars;
   };
   const starArr = renderStars(rating);
+  const keyArr = [1, 2, 3, 4, 5];
   return (
     <div className="flex items-center">
-      {starArr.map((star) => (
-        <Image src={star} alt="full star" className="w-4 h-4 mr-1" />
+      {starArr.map((star, index) => (
+        <Image
+          key={keyArr[index]}
+          src={star}
+          alt="full star"
+          className="w-4 h-4 mr-1"
+        />
       ))}
     </div>
   );

@@ -2,6 +2,7 @@ import Header from "./components/Header";
 import RestaurantCard from "./components/RestaurantCard";
 import { prisma } from "../server/db/client";
 import { Cuisine, Location, PRICE, Review } from "@prisma/client";
+import NavBar from "./components/NavBar";
 
 export type RestaurantCardType = {
   id: number;
@@ -21,6 +22,7 @@ type Props = {
 export default function Home({ restaurants }: Props) {
   return (
     <main>
+      <NavBar />
       <Header />
       <div className="py-3 px-36 mt-10 flex flex-wrap justify-center">
         {restaurants.map((restaurant) => (

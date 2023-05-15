@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
+import React from "react";
 import Header from "./components/Header";
 import Head from "next/head";
-import Loading from "./loading";
+import NavBar from "../../components/NavBar";
 
 export default function RestaurantLayout({
   children,
@@ -19,12 +19,11 @@ export default function RestaurantLayout({
         <link rel="icon" href="" />
       </Head>
       <main>
+        <NavBar />
         <Header name={slug} />
-        <Suspense fallback={<Loading />}>
-          <div className="flex m-auto w-2/3 justify-between items-start 0 -mt-11">
-            {children}
-          </div>
-        </Suspense>
+        <div className="flex m-auto w-2/3 justify-between items-start 0 -mt-11">
+          {children}
+        </div>
       </main>
     </>
   );
