@@ -8,7 +8,8 @@ type Props = {
   restaurant: Restaurant;
 };
 export default function RestaurantCard({ restaurant }: Props) {
-  const { name, cuisine, location, price, main_image, reviews } = restaurant;
+  const { name, cuisine, location, price, main_image, reviews, slug } =
+    restaurant;
 
   const reviewRatingString = (rating: number): string => {
     if (rating > 0 && rating < 1) return "Its shit";
@@ -42,7 +43,7 @@ export default function RestaurantCard({ restaurant }: Props) {
           </div>
         </div>
         <div className="text-red-600">
-          <Link href="">View more information</Link>
+          <Link href={`/restaurant/${slug}`}>View more information</Link>
         </div>
       </div>
     </div>
