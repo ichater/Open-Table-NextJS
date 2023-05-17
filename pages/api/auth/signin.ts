@@ -3,6 +3,7 @@ import validator from "validator";
 import { prisma } from "../../../server/db/client";
 import bcrypt from "bcrypt";
 import * as jose from "jose";
+import { setCookie } from "cookies-next";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,7 +11,7 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     const errors: string[] = [];
-    const { email, passWord } = req.body;
+    const { email, password } = req.body;
 
     const validationSchema = [
       {
@@ -18,12 +19,13 @@ export default async function handler(
         errorMessage: "Email is invalid",
       },
       {
-        valid: validator.isLength(passWord, { min: 1 }),
+        valid: validator.isLength(password, { min: 1 }),
         errorMessage: "Password is invalid",
       },
     ];
     validationSchema.forEach((check) => {
       if (!check.valid) {
+        console.log("errors");
         errors.push(check.errorMessage);
       }
     });
@@ -32,22 +34,19 @@ export default async function handler(
       return res.status(400).json({ errorMessage: errors.join(" ") });
     }
 
-    const userWithEmail = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email,
       },
     });
 
-    if (!userWithEmail) {
+    if (!user) {
       return res
         .status(401)
         .json({ errorMessage: "Email or password is invalid" });
     }
 
-    const isMatch: boolean = await bcrypt.compare(
-      passWord,
-      userWithEmail.password
-    );
+    const isMatch: boolean = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res
@@ -61,13 +60,19 @@ export default async function handler(
     const secret = new TextEncoder().encode(process.env.JWT_SECRET);
     // create web token through jose
 
-    const token = await new jose.SignJWT({ email: userWithEmail.email })
+    const token = await new jose.SignJWT({ email: user.email })
       .setProtectedHeader({ alg })
       .setExpirationTime("24h")
       .sign(secret);
 
-    res.status(200).json({
-      token,
+    setCookie("jwt", token, { req, res, maxAge: 60 * 6 * 24 });
+
+    return res.status(200).json({
+      firstName: user.first_name,
+      lastName: user.last_name,
+      email: user.email,
+      phone: user.phone,
+      city: user.city,
     });
   }
 

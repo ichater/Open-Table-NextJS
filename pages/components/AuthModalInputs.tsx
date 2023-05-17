@@ -19,7 +19,6 @@ export default function AuthModalInputs({
   isSignIn,
 }: Props) {
   const { firstName, lastName, email, phone, city, password } = inputs;
-  console.log(inputs);
   return (
     <div>
       {isSignIn ? null : (

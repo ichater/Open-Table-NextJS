@@ -5,7 +5,6 @@ import * as jose from "jose";
 // function and file being in the root dir
 
 export async function middleware(req: NextRequest, res: NextResponse) {
-  console.log("I am the storm");
   const bearerToken = req.headers.get("authorization") as string;
 
   if (!bearerToken) {

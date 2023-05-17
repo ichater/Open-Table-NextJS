@@ -3,6 +3,7 @@ import RestaurantCard from "./components/RestaurantCard";
 import { prisma } from "../server/db/client";
 import { Cuisine, Location, PRICE, Review } from "@prisma/client";
 import NavBar from "./components/NavBar";
+import AuthContext from "./context/AuthContext";
 
 export type RestaurantCardType = {
   id: number;
@@ -22,13 +23,15 @@ type Props = {
 export default function Home({ restaurants }: Props) {
   return (
     <main>
-      <NavBar />
-      <Header />
-      <div className="py-3 px-36 mt-10 flex flex-wrap justify-center">
-        {restaurants.map((restaurant) => (
-          <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-        ))}
-      </div>
+      <AuthContext>
+        <NavBar />
+        <Header />
+        <div className="py-3 px-36 mt-10 flex flex-wrap justify-center">
+          {restaurants.map((restaurant) => (
+            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+          ))}
+        </div>
+      </AuthContext>
     </main>
   );
 }
