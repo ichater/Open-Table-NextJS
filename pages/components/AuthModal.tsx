@@ -20,13 +20,11 @@ const style = {
 };
 
 export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
-  const { error, loading, data, setAuthState } = useContext(
-    AuthenticationContext
-  );
+  const { error, loading } = useContext(AuthenticationContext);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const { signIn } = useAuth();
+  const { signIn, signUp } = useAuth();
 
   const [inputs, setInputs] = useState({
     firstName: "",
@@ -61,10 +59,13 @@ export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
   const renderContent = (signInContent: string, signUpContent: string) =>
     isSignIn ? signInContent : signUpContent;
 
+  const { email, password } = inputs;
+
   const handleClick = () => {
     if (isSignIn) {
-      console.log("Signing in");
-      signIn({ email: inputs.email, password: inputs.password });
+      signIn({ email, password }, handleClose);
+    } else {
+      signUp(inputs, handleClose);
     }
   };
 

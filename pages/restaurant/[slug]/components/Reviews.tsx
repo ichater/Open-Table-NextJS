@@ -1,4 +1,3 @@
-import { Review } from "@prisma/client";
 import React from "react";
 import Stars from "../../../components/Stars";
 

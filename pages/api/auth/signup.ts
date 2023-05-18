@@ -3,22 +3,23 @@ import validator from "validator";
 import { prisma } from "../../../server/db/client";
 import bcrypt from "bcrypt";
 import * as jose from "jose";
+import { setCookie } from "cookies-next";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { firstName, lastName, email, phone, city, passWord } = req.body;
+    const { firstName, lastName, email, phone, city, password } = req.body;
     const errors: string[] = [];
 
     const validationSchema = [
       {
-        valid: validator.isLength(firstName, { min: 1, max: 20 }),
+        valid: validator.isLength(firstName, { min: 3, max: 20 }),
         errorMessage: "First Name is invalid",
       },
       {
-        valid: validator.isLength(lastName, { min: 1, max: 20 }),
+        valid: validator.isLength(lastName, { min: 3, max: 20 }),
         errorMessage: "Last Name is invalid",
       },
       {
@@ -27,14 +28,14 @@ export default async function handler(
       },
       {
         valid: validator.isMobilePhone(phone),
-        errorMessage: "phone number is invalid",
+        errorMessage: "Phone number is invalid",
       },
       {
-        valid: validator.isLength(city, { min: 1 }),
-        errorMessage: "city is invalid",
+        valid: validator.isLength(city, { min: 3 }),
+        errorMessage: "City is invalid",
       },
       {
-        valid: validator.isStrongPassword(passWord),
+        valid: validator.isStrongPassword(password),
         errorMessage: "Password is not strong enough",
       },
     ];
@@ -46,7 +47,7 @@ export default async function handler(
     });
 
     if (errors.length) {
-      return res.status(400).json({ errorMessage: errors.join(" ") });
+      return res.status(400).json({ errorMessage: errors.join(", ") });
     }
 
     const userWithEmail = await prisma.user.findUnique({
@@ -59,7 +60,7 @@ export default async function handler(
         .json({ errorMessage: "Email is associated with another account" });
     }
 
-    const hashedPassword = await bcrypt.hash(passWord, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create the new user
     const user = await prisma.user.create({
@@ -84,8 +85,14 @@ export default async function handler(
       .setExpirationTime("24h")
       .sign(secret);
 
-    res.status(200).json({
-      token,
+    setCookie("jwt", token, { req, res, maxAge: 60 * 6 * 24 });
+
+    return res.status(200).json({
+      firstName: user.first_name,
+      lastName: user.last_name,
+      email: user.email,
+      phone: user.phone,
+      city: user.city,
     });
   }
   return res.status(404).json("unknown endpoint");
