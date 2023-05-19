@@ -6,6 +6,7 @@ import { prisma } from "../../server/db/client";
 import { Cuisine, Location, PRICE, Review } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import NavBar from "../components/NavBar";
+import AuthContext from "../context/AuthContext";
 
 export interface Restaurant {
   id: string;
@@ -27,17 +28,19 @@ type Props = {
 export default function search({ restaurants, cuisines, locations }: Props) {
   return (
     <>
-      <Head />
-      <NavBar />
-      <Header />
-      <div className="flex py-4 m-auto w-2/3 justify-between items-start">
-        <SideBar cuisines={cuisines} locations={locations} />
-        <div className="w-5/6">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-          ))}
+      <AuthContext>
+        <Head />
+        <NavBar />
+        <Header />
+        <div className="flex py-4 m-auto w-2/3 justify-between items-start">
+          <SideBar cuisines={cuisines} locations={locations} />
+          <div className="w-5/6">
+            {restaurants.map((restaurant) => (
+              <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            ))}
+          </div>
         </div>
-      </div>
+      </AuthContext>
     </>
   );
 }
