@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useContext } from "react";
 import { AuthenticationContext } from "../pages/context/AuthContext";
+import { getCookie } from "cookies-next";
 
 const useAuth = () => {
   const { data, error, setAuthState } = useContext(AuthenticationContext);

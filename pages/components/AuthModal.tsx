@@ -20,7 +20,7 @@ const style = {
 };
 
 export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
-  const { error, loading } = useContext(AuthenticationContext);
+  const { error, loading, data } = useContext(AuthenticationContext);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -100,6 +100,7 @@ export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
                 <p className="text-sm">
                   {renderContent("Sign In", "Create account")}
                 </p>
+                <p>{data?.firstName}</p>
               </div>
               <div className="m-auto ">
                 <AuthModalInputs
@@ -115,6 +116,9 @@ export default function AuthModal({ isSignIn }: { isSignIn: boolean }) {
                   {" "}
                   {renderContent("Sign In", "Create  Account")}
                 </button>
+                <p>
+                  {data?.firstName} {data?.lastName}
+                </p>
               </div>
             </div>
           )}

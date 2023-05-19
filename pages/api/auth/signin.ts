@@ -25,7 +25,6 @@ export default async function handler(
     ];
     validationSchema.forEach((check) => {
       if (!check.valid) {
-        console.log("errors");
         errors.push(check.errorMessage);
       }
     });
