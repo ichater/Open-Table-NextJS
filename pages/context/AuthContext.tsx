@@ -44,6 +44,7 @@ export default function AuthContext({
     data: null,
     error: null,
   });
+
   const fetchUser = async () => {
     setAuthState({
       data: null,

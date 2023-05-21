@@ -16,6 +16,8 @@ export interface Restaurant {
   description: string;
   slug: string;
   reviews: Review[];
+  open_time: string;
+  close_time: string;
 }
 
 type Props = {
@@ -23,7 +25,8 @@ type Props = {
 };
 
 export default function Restaurant({ restaurant }: Props) {
-  const { slug, name, images, description, reviews } = restaurant;
+  const { slug, name, images, description, reviews, open_time, close_time } =
+    restaurant;
   return (
     <>
       <div className="bg-white w-[70%] rounded p-3 shadow">
@@ -35,7 +38,7 @@ export default function Restaurant({ restaurant }: Props) {
         <Reviews reviews={reviews} />
       </div>
       <div className="w-[27%] relative text-reg">
-        <ReservationCard />
+        <ReservationCard openTime={open_time} closeTime={close_time} />
       </div>
     </>
   );
@@ -52,6 +55,8 @@ export const getServerSideProps = async (context: any) => {
       description: true,
       slug: true,
       reviews: true,
+      open_time: true,
+      close_time: true,
     },
   });
 
