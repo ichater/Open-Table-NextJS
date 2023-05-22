@@ -1,23 +1,39 @@
 "use client";
 
 import { useState } from "react";
-import { partySize, times } from "../../../../data";
+import { partySize as partySizes, times } from "../../../../data";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import useAvailabilities from "../../../../hooks/useAvailabilities";
 
 type Props = {
   openTime: string;
   closeTime: string;
+  slug: string;
 };
 
-export default function ReservationCard({ openTime, closeTime }: Props) {
+export default function ReservationCard({ openTime, closeTime, slug }: Props) {
+  const { data, loading, error, fetchAvailabilities } = useAvailabilities();
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+  const [time, setTime] = useState(openTime);
+  const [partySize, setPartySize] = useState("2");
+  const [day, setDay] = useState(new Date().toISOString().split("T")[0]);
 
   const handleChangeDate = (date: Date | null) => {
     if (date) {
+      setDay(date.toISOString().split("T")[0]);
       return setSelectedDate(date);
     }
     return setSelectedDate(null);
+  };
+
+  const handleClick = () => {
+    fetchAvailabilities({
+      slug,
+      day,
+      time,
+      partySize,
+    });
   };
 
   const avalibleTimesArr = times.slice(
@@ -28,12 +44,18 @@ export default function ReservationCard({ openTime, closeTime }: Props) {
   return (
     <div className="fixed w-[15%] bg-white rounded p-3 shadow">
       <div className="text-center border-b pb-2 font-bold">
-        <h4 className="mr-7 text-lg">Make a Reservation</h4>
+        <h4 className="mr-7 text-lg">Make a Reservation </h4>
       </div>
       <div className="my-3 flex flex-col">
         <label htmlFor="">Party size</label>
-        <select name="" className="py-3 border-b font-light" id="">
-          {partySize.map((size) => (
+        <select
+          name=""
+          className="py-3 border-b font-light"
+          id=""
+          value={partySize}
+          onChange={(e) => setPartySize(e.target.value)}
+        >
+          {partySizes.map((size) => (
             <option key={size.label} value={size.value}>
               {size.label}
             </option>
@@ -53,7 +75,13 @@ export default function ReservationCard({ openTime, closeTime }: Props) {
         </div>
         <div className="flex flex-col w-[48%]">
           <label htmlFor="">Time</label>
-          <select name="" id="" className="py-3 border-b font-light">
+          <select
+            name=""
+            id=""
+            className="py-3 border-b font-light"
+            value={time}
+            onChange={(e) => setTime(e.target.value)}
+          >
             {avalibleTimesArr.map((time) => (
               <option key={time.displayTime} value={time.time}>
                 {time.displayTime}
@@ -63,7 +91,10 @@ export default function ReservationCard({ openTime, closeTime }: Props) {
         </div>
       </div>
       <div className="mt-5">
-        <button className="bg-red-600 rounded w-full px-4 text-white font-bold h-16">
+        <button
+          className="bg-red-600 rounded w-full px-4 text-white font-bold h-16"
+          onClick={handleClick}
+        >
           Find a Time
         </button>
       </div>

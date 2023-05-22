@@ -38,7 +38,11 @@ export default function Restaurant({ restaurant }: Props) {
         <Reviews reviews={reviews} />
       </div>
       <div className="w-[27%] relative text-reg">
-        <ReservationCard openTime={open_time} closeTime={close_time} />
+        <ReservationCard
+          openTime={open_time}
+          closeTime={close_time}
+          slug={slug}
+        />
       </div>
     </>
   );
