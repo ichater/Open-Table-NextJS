@@ -8,6 +8,7 @@ import ReservationCard from "./components/ReservationCard";
 import Layout from "./layout";
 import { prisma } from "../../../server/db/client";
 import { Review } from "@prisma/client";
+import { Time } from "../../../utils/convertToDisplayTime";
 
 export interface Restaurant {
   id: string;
@@ -39,8 +40,8 @@ export default function Restaurant({ restaurant }: Props) {
       </div>
       <div className="w-[27%] relative text-reg">
         <ReservationCard
-          openTime={open_time}
-          closeTime={close_time}
+          openTime={open_time as Time}
+          closeTime={close_time as Time}
           slug={slug}
         />
       </div>

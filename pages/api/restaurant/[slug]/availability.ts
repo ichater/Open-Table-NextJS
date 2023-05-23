@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { times } from "../../../../data";
 import { prisma } from "../../../../server/db/client";
+import { findAvailableTables } from "../../../../services/restaurant/findAvailableTables";
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,41 +20,6 @@ export default async function handler(
     });
   }
 
-  const searchTimes = times.find((t) => {
-    return t.time === time;
-  })?.searchTimes;
-
-  if (!searchTimes) {
-    res.status(400).json({
-      errorMessage: "Invalid data provided",
-    });
-  }
-
-  const bookings = await prisma.booking.findMany({
-    where: {
-      booking_time: {
-        gte: new Date(`${day}T${searchTimes && searchTimes[0]}`),
-        lte: new Date(
-          `${day}T${searchTimes && searchTimes[searchTimes.length - 1]}`
-        ),
-      },
-    },
-    select: {
-      number_of_people: true,
-      booking_time: true,
-      tables: true,
-    },
-  });
-
-  const bookingTablesObj: { [key: string]: { [key: number]: true } } = {};
-
-  bookings.forEach((booking) => {
-    bookingTablesObj[booking.booking_time.toISOString()] =
-      booking.tables.reduce((obj, table) => {
-        return { ...obj, [table.table_id]: true };
-      }, {});
-  });
-
   const restaurant = await prisma.restaurant.findUnique({
     where: {
       slug,
@@ -66,27 +32,23 @@ export default async function handler(
   });
 
   if (!restaurant) {
-    res.status(400).json({
+    return res.status(400).json({
       errorMessage: "Invalid data provided",
     });
   }
 
-  const tables = restaurant?.tables;
-
-  const searchTimesWithTables = searchTimes?.map((time) => ({
-    date: new Date(`${day}T${time}`),
-    time: time,
-    tables,
-  }));
-
-  searchTimesWithTables?.forEach((t) => {
-    t.tables = t.tables?.filter((table) => {
-      if (bookingTablesObj[t.date.toISOString()]) {
-        if (bookingTablesObj[t.date.toISOString()][table.id]) return false;
-      }
-      return true;
-    });
+  const searchTimesWithTables = await findAvailableTables({
+    day,
+    time,
+    res,
+    restaurant,
   });
+
+  if (!searchTimesWithTables) {
+    res.status(400).json({
+      errorMessage: "Invalid data provided",
+    });
+  }
 
   const availbilities = searchTimesWithTables
     ?.map((t) => {
@@ -107,9 +69,7 @@ export default async function handler(
       return timeIsAfterOpeningHour && timeIsbeforeClosingHour;
     });
 
-  return res.json({
-    availbilities,
-  });
+  return res.json(availbilities);
 }
 
 // http://localhost:3000/api/restautant/vivaan-fine-indian-cuisine-ottawa/availability?day=2023-05-22&time=14:00:00.000Z&partySize=4

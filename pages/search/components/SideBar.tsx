@@ -1,7 +1,5 @@
 import { Cuisine, Location, PRICE } from "@prisma/client";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 type Props = {
   cuisines: Cuisine[];
