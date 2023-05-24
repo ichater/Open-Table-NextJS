@@ -111,7 +111,7 @@ export default function ReservationCard({ openTime, closeTime, slug }: Props) {
             {data.map((time) =>
               time.available ? (
                 <Link
-                  href={`/reserve${slug}?date=${day}T${time.time}&partySize=${partySize}`}
+                  href={`/reserve/${slug}?date=${day}T${time.time}&partySize=${partySize}`}
                   className="bg-red-600 cursor-pointer padding-2 w-24 text-center text-white mb-3 rounded mr-3"
                 >
                   {" "}
